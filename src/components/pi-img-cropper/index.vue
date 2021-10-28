@@ -13,6 +13,7 @@
       <view class="corner rb" @touchstart="setCutMode('rb')"></view>
       <view class="corner lb" @touchstart="setCutMode('lb')"></view>
     </view>
+    <canvas v-if="canvasId" :id="canvasId" :canvas-id="canvasId" style="position: absolute;left:-500000px;top: -500000px" :style="{width: crop.width * canvasZoom+'px', height: crop.height * canvasZoom + 'px'}" />
   </view>
 </template>
 <script>
@@ -57,8 +58,13 @@ export default {
     // 是否禁止旋转
     disableRotate: {
       type: Boolean,
-      // `false`
-      default: false
+      // `true`
+      default: true
+    },
+    // 放大裁剪窗口的倍数
+    canvasZoom: {
+      type: Number,
+      default: 1
     }
   },
   data() {
@@ -253,6 +259,7 @@ export default {
 
 .img {
   position: absolute;
+  transform-origin: 50% 50%;
 }
 
 .crop {
