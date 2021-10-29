@@ -4,7 +4,16 @@
       <text class="title">{{ title }}</text>
     </view>
     <view class="scroll">
-      <pi-img-cropper :src="src" />
+      <pi-img-cropper
+        :src="src"
+        @cropped="handleCropped"
+        @afterDraw="handleAfterDraw"
+      />
+      <image
+        :style="[imgSize]"
+        :src="cropImgPath"
+        style="position: fixed; top: 0; left: 0"
+      />
     </view>
   </view>
 </template>
@@ -19,11 +28,31 @@ export default {
     return {
       title: 'Hello',
       // src: 'https://img1.baidu.com/it/u=395380977,272417941&fm=26&fmt=auto'
-      src: 'https://img2.baidu.com/it/u=379288490,3520188610&fm=26&fmt=auto'
+      src: 'https://img2.baidu.com/it/u=379288490,3520188610&fm=26&fmt=auto',
+      cropImgPath: '',
+      size: { width: 0, height: 0 }
+    }
+  },
+  computed: {
+    imgSize() {
+      return {
+        width: `${this.size.width}px`,
+        height: `${this.size.height}px`
+      }
     }
   },
   onLoad() {},
-  methods: {}
+  methods: {
+    handleCropped(result) {
+      this.cropImgPath = result.img
+      this.size = { width: result.width, height: result.height }
+    },
+    handleAfterDraw(draw) {
+      draw.ctx.setFontSize(50)
+      draw.ctx.setFillStyle('#ff0000')
+      draw.ctx.fillText('PiUI', draw.width * 0.25, draw.height * 0.5)
+    }
+  }
 }
 </script>
 

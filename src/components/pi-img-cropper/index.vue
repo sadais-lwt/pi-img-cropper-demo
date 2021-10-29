@@ -13,16 +13,23 @@
       <view class="corner rb" @touchstart="setCutMode('rb')"></view>
       <view class="corner lb" @touchstart="setCutMode('lb')"></view>
     </view>
-    <canvas v-if="canvasId" :id="canvasId" :canvas-id="canvasId" style="position: absolute;left:-500000px;top: -500000px" :style="{width: crop.width * canvasZoom+'px', height: crop.height * canvasZoom + 'px'}" />
+    <canvas
+      v-if="canvasId"
+      :id="canvasId"
+      :canvas-id="canvasId"
+      style="position: absolute; left: -500000px; top: -500000px"
+      :style="canvasStyle"
+    />
   </view>
 </template>
 <script>
 import Touch from './touch'
 import Vector from './vector'
+import Canvas from './canvas'
 
 export default {
   name: 'pi-img-cropper',
-  mixins: [Touch, Vector],
+  mixins: [Touch, Vector, Canvas],
   props: {
     // 图片src
     src: {
@@ -69,11 +76,13 @@ export default {
   },
   data() {
     return {
+      ratio: 1,
       root: {
         width: 0,
         height: 0
       },
       img: {
+        path: '',
         transform: {
           x: 0,
           y: 0,
@@ -124,9 +133,19 @@ export default {
       }
     }
   },
+  watch: {
+    src() {
+      this.initImage()
+    }
+  },
   created() {
-    this.$nextTick(() => {
-      this.initUI()
+    uni.getSystemInfo({
+      success: (result) => {
+        this.ratio = result.windowWidth / 750
+        this.$nextTick(() => {
+          this.initUI()
+        })
+      }
     })
   },
   methods: {
@@ -183,6 +202,7 @@ export default {
       const y = (root.height - img.height) / 2
       const scale = w / img.width
       this.img = {
+        path: img.path,
         width: img.width,
         height: img.height,
         transform: {
@@ -238,7 +258,7 @@ export default {
         } else if (/rpx$/i.test(unit)) {
           value = Number(unit.replace(/rpx$/i, ''))
           value = !value ? 0 : value
-          value = (value * this.root.width) / 750
+          value = value * this.ratio
         } else {
           value = Number(unit.replace(/px$/i, ''))
         }

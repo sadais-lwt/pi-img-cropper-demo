@@ -52,6 +52,7 @@ export default {
       this.touch = {}
       this.cutMode = null
       this.focus = true
+      this.draw()
     },
     updateImgTranslate() {
       const transform = this.img.transform
