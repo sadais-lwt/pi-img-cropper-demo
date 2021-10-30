@@ -66,7 +66,7 @@ export default {
     disableRotate: {
       type: Boolean,
       // `true`
-      default: true
+      default: false
     },
     // 放大裁剪窗口的倍数
     canvasZoom: {
